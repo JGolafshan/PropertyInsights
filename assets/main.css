@@ -1,0 +1,276 @@
+/* Reset */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Remove Bootstrap padding */
+.container-fluid {
+    padding: 0;
+}
+
+/* App layout */
+#app_container {
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Bootstrap grid must stretch */
+.row {
+    height: 100%;
+}
+
+.col-3, .col-9 {
+    height: 100%;
+    padding 0;
+}
+
+/* Sidebar */
+.sidebar {
+    height: 100%;
+    overflow-y: auto\
+    background: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    padding: 0;
+}
+
+/* Sidebar header */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.sidebar-title {
+    font-size: 3rem
+    font-weight: 700;
+}
+
+/* Gear icon */
+.icon {
+    cursor: pointer;
+    margin-left:0.8rem;
+    font-size: 1.4rem;
+    color: #6b7280;
+}
+
+.icon:hover {
+    color: #111827;
+}
+
+/* Map */
+#property-map {
+    height: 100%;
+    padding: 0;
+}
+
+#main_map {
+    width: 100%;
+    height: 100%;
+}
+
+/* Property cards */
+
+.property_supplemental{
+    padding: 0.3rem;
+    display: flex;
+}
+
+.property-card.horizontal {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px; /* Space between image and text */
+    padding: 1.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fff;
+    width: 100%; /* Or fixed width if needed */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.property-thumbnail {
+    width: 120px;  /* smaller image for horizontal layout */
+    height: 90px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.property-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Space between each text element */
+}
+
+.property-address {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.property-status {
+    font-size: 0.85rem;
+    color: #fff;
+    background-color: #007bff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
+.property-price {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.property-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Status badges */
+.property-status.active {
+    background: #e6f4ea;
+    color: #137333;
+}
+
+.property-status.under-offer {
+    background: #fff4e5;
+    color: #b45309;
+}
+
+.property-status.sold {
+    background: #fde8e8;
+    color: #b91c1c;
+}
+
+/* Navbar container */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    font-family: 'Inter', sans-serif;
+    z-index: 1000;
+}
+
+/* Brand / title */
+.navbar-brand {
+    font-weight: 700;
+    font-size: 18px;
+    color: #111827;
+}
+
+/* Links container */
+.navbar-links {
+    display: flex;
+    gap: 15px;
+}
+
+/* Links style */
+.navbar-links a {
+    text-decoration: none;
+    color: #6b7280;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.navbar-links a:hover {
+    color: #111827;
+}
+
+/* Hamburger icon */
+.navbar-toggle {
+    display: none; /* hidden on larger screens */
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Responsive behavior */
+
+/* Small screens: hide links, show toggle */
+@media (max-width: 991px) {  /* < lg */
+    .navbar-links {
+        display: none;
+    }
+
+    .navbar-toggle {
+        display: block;
+    }
+}
+
+/* Optional: toggle menu when hamburger clicked */
+.navbar-links.show {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 60px; /* below navbar */
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    padding: 10px 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+
+.popup-card {
+    width: 260px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    font-family: Inter, sans-serif;
+}
+
+.popup-image {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+}
+
+.popup-content {
+    padding: 12px;
+}
+
+.popup-title {
+    font-size: 0.95rem;
+    margin: 0 0 4px;
+}
+
+.popup-price {
+    font-weight: 600;
+    color: #2563eb;
+    margin-bottom: 8px;
+}
+
+.popup-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    font-size: 0.8rem;
+}
+
+.popup-feature {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.popup-feature img {
+    width: 14px;
+    height: 14px;
+}
+
+.popup-button {
+    display: block;
+    margin-top: 10px;
+    padding: 8px;
+    background: #2563eb;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    text-decoration: none;
+}
