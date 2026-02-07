@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 """
-    Date: 04/02/2025
-    Author: Joshua David Golafshan
+Date: 04/02/2025
+Author: Joshua David Golafshan
 """
 
 from dash import html
-
+from src.backend.application_constants import PROJECT_ROOT
 
 def PropertyCard(address, price, status, img_url=None):
     return html.Div(
@@ -15,8 +15,8 @@ def PropertyCard(address, price, status, img_url=None):
         children=[
             # Image on the left
             html.Img(
-                src=img_url or "/assets/placeholder.jpg",
-                className="property-thumb",
+                src=img_url or PROJECT_ROOT + "/assets/placeholder.jpg",
+                className="property-thumbnail",
             ),
             # Text content on the right
             html.Div(
@@ -50,16 +50,16 @@ def PropertyMenu():
                     html.H4("Property List", className="sidebar-title"),
                     html.Div(
                         children=[
-                            html.I(className="fas fa-cog icon"),
-                            html.I(className="fas fa-layer-group icon"),
-                            html.I(className="fas fa-road icon")
+                            html.I(className="fas fa-search icon", id="search-modal-open"),
+                            html.I(className="fas fa-cog icon", id="filter-modal-open"),
+                            html.I(className="fas fa-layer-group icon", id="poi-modal-open"),
+                            html.I(className="fas fa-road icon", id="ed-modal-open")
                         ],
-                        id="filter-button",
-                        title="Open Filters",
-                        n_clicks=0,
-                    ),
+                        id="options-list",
+                    )
                 ],
-            )
+            ),
+                html.Hr()
         ]
     )
 

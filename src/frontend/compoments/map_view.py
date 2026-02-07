@@ -1,12 +1,12 @@
 import dash_leaflet as dl
-from src.compoments.property_hover_card import PropertyHoverCard
+from src.frontend.compoments.property_hover_card import PropertyHoverCard
 
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
-    Date: 04/02/2025
-    Author: Joshua David Golafshan
+Date: 04/02/2025
+Author: Joshua David Golafshan
 """
 
 def PropertyMarker(p):

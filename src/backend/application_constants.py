@@ -13,7 +13,7 @@ from configparser import ConfigParser
 
 # Determine project root relative to this file
 SCRIPT_DIR = Path(__file__).resolve()
-PROJECT_ROOT = SCRIPT_DIR.parents[3]
+PROJECT_ROOT = SCRIPT_DIR.parents[2]
 
 # Create mandatory files
 folder_list = [
@@ -41,7 +41,6 @@ def get_config_var(key, section="application_settings", default=None, required=F
     if required and not val:
         raise EnvironmentError(f"Missing required configuration: {key}")
     return val or default
-
 
 # === Core Paths ===
 ENV_PATH = PROJECT_ROOT / ".env"
