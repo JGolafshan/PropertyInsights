@@ -5,11 +5,12 @@
 Date: 07/02/2025
 Author: Joshua David Golafshan
 """
+
 from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime, timezone
 from src.backend.property_pydantic_model import Property
-from beanie import (Document, Insert, Link, Replace, SaveChanges, Update, before_event)
+from beanie import (Document, Insert, Replace, SaveChanges, Update, before_event)
 
 
 class AuditBase(BaseModel):
@@ -43,7 +44,7 @@ class AuditBase(BaseModel):
 
 
 
-class VehicleDocument(Property, AuditBase, Document):
+class PropertyDocument(Property, AuditBase, Document):
 
     class Settings:
         name = "property"

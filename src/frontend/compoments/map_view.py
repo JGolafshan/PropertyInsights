@@ -1,6 +1,3 @@
-import dash_leaflet as dl
-from src.frontend.compoments.property_hover_card import PropertyHoverCard
-
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
@@ -8,6 +5,11 @@ from src.frontend.compoments.property_hover_card import PropertyHoverCard
 Date: 04/02/2025
 Author: Joshua David Golafshan
 """
+
+import dash_leaflet as dl
+from dash import Input, Output
+from dash.exceptions import PreventUpdate
+from src.frontend.compoments.property_hover_card import PropertyHoverCard
 
 def PropertyMarker(p):
     return dl.CircleMarker(
@@ -44,3 +46,20 @@ def MapView(properties):
         style={"width": "100%", "height": "100%"},
         id="main_map",
     )
+
+def register_map_callbacks(app):
+
+    @app.callback(
+        Output("main_map", "center"),
+        Output("main_map", "zoom"),
+        Input("selected-location", "data"),
+    )
+    def move_map(location):
+
+        if not location:
+            raise PreventUpdate
+
+        return (
+            [location["lat"], location["lon"]],
+            14,  # zoom in to suburb level
+        )

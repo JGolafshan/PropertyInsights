@@ -6,16 +6,16 @@ Date: 04/02/2025
 Author: Joshua David Golafshan
 """
 
-from dash import Dash, html
+from dash import Dash, html, dcc
 from storage.data import test_data
 import dash_bootstrap_components as dbc
-from src.frontend.compoments.navbar import Navbar
-from src.frontend.compoments.map_view import MapView
+from src.frontend.compoments.navbar import Navbar, register_search_callbacks
+from src.frontend.compoments.map_view import MapView, register_map_callbacks
 from src.frontend.compoments.side_menu import PropertyMenu, PropertyCards
 from src.frontend.modals.filter_modal import register_filter_modal, FilterModal
-from src.frontend.modals.poi_modal import register_poi_modal, PointOfIntrestModal
+from src.frontend.modals.poi_modal import register_poi_modal, PointOfInterestModal
 from src.frontend.modals.external_data_modal import register_ed_modal, ExternalDataModal
-from src.frontend.modals.search_modal import register_search_modal, SearchModal
+from src.frontend.modals.search_modal import SearchModal, register_search_modal_callbacks, register_search_modal_toggle
 
 app = Dash(
     __name__,
@@ -27,16 +27,17 @@ app = Dash(
 
 register_filter_modal(app)
 register_poi_modal(app)
-register_search_modal(app)
 register_ed_modal(app)
+register_search_callbacks(app)
 
 app.layout = html.Div(
     id="app_container",
     className="container-fluid",
     children=[
+        dcc.Store(id="selected-location"),
 
         FilterModal(),
-        PointOfIntrestModal(),
+        PointOfInterestModal(),
         SearchModal(),
         ExternalDataModal(),
 
@@ -69,6 +70,11 @@ app.layout = html.Div(
         ),
     ],
 )
+
+register_map_callbacks(app)
+register_search_modal_callbacks(app)
+register_search_modal_toggle(app)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

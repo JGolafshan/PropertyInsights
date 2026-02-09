@@ -15,17 +15,6 @@ from configparser import ConfigParser
 SCRIPT_DIR = Path(__file__).resolve()
 PROJECT_ROOT = SCRIPT_DIR.parents[2]
 
-# Create mandatory files
-folder_list = [
-    "storage",
-    "storage/logs",
-    "storage/images",
-    "storage/data",
-]
-
-for folder in folder_list:
-    folder_path = PROJECT_ROOT / folder
-    folder_path.mkdir(parents=True, exist_ok=True)
 
 # Load config.ini
 config = ConfigParser()
@@ -55,3 +44,9 @@ else:
 
 # Load .env file
 load_dotenv(ENV_PATH)
+
+
+DB_USERNAME = get_config_var("DB_USERNAME")
+DB_PASSWORD = get_config_var("DB_PASSWORD")
+DB_APP_NAME = get_config_var("DB_APP_NAME")
+DB_NAME = get_config_var("DB_NAME")
