@@ -13,7 +13,7 @@ from pymongo.errors import DuplicateKeyError
 
 from src.backend.property_db_model import PropertyDocument
 from src.backend.application_constants import DB_PASSWORD, DB_APP_NAME, DB_NAME, DB_USERNAME
-
+from src.backend.property_pydantic_model import Property
 
 MONGODB_URI = (
     f"mongodb+srv://{DB_USERNAME}:{DB_PASSWORD}@"
@@ -31,13 +31,42 @@ async def init_db():
         document_models=[PropertyDocument],
     )
 
-async def insert_property(property_data):
+async def property_exists(url: str) -> bool:
+    return bool(await PropertyDocument.find_one({"url": url}))
+
+
+async def insert_property(property_data: Property):
     try:
-        doc = PropertyDocument(**property_data.model_dump())
-        await doc.insert()
+        if not await property_exists(property_data.url):
+            doc = PropertyDocument(**property_data.model_dump())
+            await doc.insert()
+        else:
+            print("Skipping", property_data)
     except DuplicateKeyError:
         pass
 
+async def remove_duplicate_properties() -> int:
+    """
+    Finds duplicate PropertyDocument URLs and deletes all but one of each.
+    Returns the total number of deleted documents.
+    """
+    deleted_count = 0
+    seen_urls = set()
+
+    # Fetch all properties (only id and url to save memory)
+    all_properties = await get_all_properties(1000000, False)
+
+    for prop in all_properties:
+        url = prop.url
+        if url in seen_urls:
+            # Duplicate found, delete it
+            result = await PropertyDocument.delete(prop)
+            deleted_count += result.deleted_count
+        else:
+            seen_urls.add(url)
+
+    print(f"Deleted {deleted_count} duplicate properties")
+    return deleted_count
 
 async def get_all_properties(limit: int = 100, only_with_geo: bool = True):
     """
@@ -54,7 +83,12 @@ async def get_all_properties(limit: int = 100, only_with_geo: bool = True):
     if only_with_geo:
         query = {
             "address.latitude": {"$exists": True, "$ne": None},
-            "address.longitude": {"$exists": True, "$ne": None}
+            "address": {"$exists": True, "$ne": None},
+            "address.longitude": {"$exists": True, "$ne": None},
+            "address.address_raw": {"$exists": True, "$ne": None},
+            "price.actual_price": {"$exists": True, "$ne": "N/A"},
+            "price.min_price_guide": {"$exists": True, "$ne": "N/A"},
+            "price.max_price_guide": {"$exists": True, "$ne": "N/A"},
         }
 
     return await PropertyDocument.find(query).limit(limit).to_list()
@@ -139,3 +173,12 @@ async def get_total_property_count() -> int:
     Total number of Property documents in the database.
     """
     return await PropertyDocument.find_all().count()
+
+
+async def main():
+    await init_db()
+    deleted = await remove_duplicate_properties()
+    print(f"Removed {deleted} duplicate properties")
+
+if __name__ == "__main__":
+    asyncio.run(main())

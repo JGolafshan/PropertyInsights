@@ -41,6 +41,7 @@ class Property(BaseModel):
     url: str
     sale_type: str
     property_type: str
+    land_size: Optional[str]
     address: Optional[PropertyAddress]
     price: Optional[PropertyPrice] = None
     images: Optional[List[Images]] = Field(default_factory=list)

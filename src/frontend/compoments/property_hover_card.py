@@ -49,10 +49,10 @@ def _get_land_size_display(p: PropertyDocument) -> str | None:
 
 def _feature_item(icon_class: str, text: str):
     return html.Div(
-        className="popup-feature",
+        className="property-meta-chip",
         children=[
-            html.I(className=f"{icon_class} popup-feature-icon"),
-            html.Span(text, className="popup-feature-text"),
+            html.I(className=f"{icon_class}"),
+            html.Span(text),
         ],
     )
 
@@ -80,11 +80,11 @@ def PropertyHoverCard(p: PropertyDocument):
 
     features = []
     if beds is not None:
-        features.append(_feature_item("fas fa-bed", f"{beds} bed"))
+        features.append(_feature_item("fas fa-bed", f"{beds}"))
     if baths is not None:
-        features.append(_feature_item("fas fa-bath", f"{baths} bath"))
+        features.append(_feature_item("fas fa-bath", f"{baths}"))
     if cars is not None:
-        features.append(_feature_item("fas fa-car", f"{cars} car"))
+        features.append(_feature_item("fas fa-car", f"{cars}"))
     if land is not None:
         features.append(_feature_item("fas fa-ruler-combined", str(land)))
 
@@ -104,7 +104,7 @@ def PropertyHoverCard(p: PropertyDocument):
                     html.H3(address, className="popup-title"),
                     html.P(price_txt, className="popup-price"),
                     html.Div(
-                        className="popup-features",
+                        className="property-meta",
                         children=features,
                     ) if features else None,
                     html.A(

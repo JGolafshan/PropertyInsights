@@ -31,14 +31,36 @@ POI_STYLE = {
     "fire_station": ("#ef4444", "Fire", "fa-solid fa-fire-extinguisher"),
 }
 
+# (Color, Icon)
+PROPERTY_STYLE = {
+    "house": ("#2563eb", "fa-solid fa-house"),
+    "apartment": ("#2563eb","fa-solid fa-building"),
+    "land": ("#2563eb", "fa-solid fa-mound"),
+    "other": ("#2563eb", "fa-solid fa-sign-hanging"),
+}
+
 
 def PropertyMarker(p: PropertyDocument):
-    return dl.CircleMarker(
-        center=[p.address.latitude, p.address.longitude],
-        radius=6,
-        color="#2563eb",
-        fill=True,
-        fillOpacity=0.9,
+    prop_type = (p.property_type).lower()
+    default_set = PROPERTY_STYLE.get("other")
+    color, icon_cls = PROPERTY_STYLE.get(prop_type, default_set)
+
+    name = p.address.address_raw
+
+    icon = dict(
+        html=f"""
+        <div class="poi-fa-bubble" title="{name}" style="border:2px solid {color}; color:{color};">
+            <i class="{icon_cls}"></i>
+        </div>
+        """,
+        className="poi-fa-icon",
+        iconSize=[26, 26],
+        iconAnchor=[13, 13],
+    )
+
+    return dl.DivMarker(
+        position=[p.address.latitude, p.address.longitude],
+        iconOptions=icon,
         children=[
             dl.Popup(
                 PropertyHoverCard(p),
@@ -50,7 +72,6 @@ def PropertyMarker(p: PropertyDocument):
             )
         ],
     )
-
 
 def PoiMarker(poi: dict):
     poi_type = poi.get("category")
@@ -77,11 +98,7 @@ def PoiMarker(poi: dict):
     )
 
 
-
-
 def MapView(properties):
-    # IMPORTANT: dcc.Store / dcc.Interval must NOT be children of dl.Map.
-    # Put them next to the map so Dash can see them and callbacks can bind to them.
     return html.Div(
         style={"width": "100%", "height": "100%"},
         children=[
@@ -89,19 +106,15 @@ def MapView(properties):
             dcc.Interval(id="map-resize-kick", interval=300, n_intervals=0, max_intervals=1),
             dl.Map(
                 children=[
-                    dl.TileLayer(
-                        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                    ),
-                    dl.LayerGroup(
-                        id="property-markers",
-                        children=[PropertyMarker(p) for p in properties],
-                    ),
+                    dl.TileLayer(url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"),
+                    dl.LayerGroup(id="property-markers", children=[PropertyMarker(p) for p in properties]),
                     dl.LayerGroup(id="poi-markers", children=[]),
                 ],
                 center=[-33.8688, 151.2093],
                 zoom=10,
                 zoomControl=False,
                 style={"width": "100%", "height": "100%"},
+                preferCanvas=True,
                 id="main_map",
             ),
         ],
@@ -109,7 +122,6 @@ def MapView(properties):
 
 
 def register_map_callbacks(app):
-    # Fire a browser resize event once; Leaflet listens to resize and fixes pixel math for markers.
     app.clientside_callback(
         """
         function(n) {

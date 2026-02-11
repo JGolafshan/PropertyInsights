@@ -1,190 +1,4 @@
 /* ================================
-   Popup (map hover) + modal polish
-   ================================ */
-
-/* ---- Leaflet tooltip container cleanup (your tooltip is holding the popup-card) ---- */
-.leaflet-tooltip {
-    padding: 0;
-    border: none;
-    background: transparent;
-    box-shadow: none;
-}
-
-/* ---- Popup card: tighter + cleaner ---- */
-.popup-card {
-    width: 292px;
-    border-radius: 16px;
-    overflow: hidden;
-    background: var(--surface);
-    border: 1px solid rgba(226,232,240,0.98);
-    box-shadow: 0 18px 55px rgba(15, 23, 42, 0.18);
-}
-
-.popup-image-wrapper {
-    background: var(--surface-2);
-}
-
-.popup-image {
-    width: 100%;
-    height: 154px;
-    object-fit: cover;
-    display: block;
-}
-
-.popup-content {
-    padding: 12px 12px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.popup-title {
-    font-size: var(--fs-15);
-    font-weight: 800;
-    margin: 0;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-    color: var(--text);
-
-    display: -webkit-box;
-    -webkit-line-clamp: 2;      /* prevents super tall cards */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.popup-price {
-    font-size: var(--fs-14);
-    font-weight: 800;
-    color: var(--primary);
-    margin: 0;
-}
-
-.popup-button {
-    margin-top: 4px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    height: 36px;
-    padding: 0 12px;
-    width: fit-content;          /* avoids the giant full-width blue bar */
-    border-radius: 12px;
-
-    background: var(--primary);
-    color: #fff;
-    text-decoration: none;
-    font-size: var(--fs-13);
-    font-weight: 800;
-
-    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
-    transition: background-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
-}
-
-.popup-button:hover {
-    background: var(--primary-600);
-}
-
-.popup-button:active {
-    transform: translateY(1px);
-}
-
-.popup-cta-icon {
-    font-size: 0.85em;
-    opacity: 0.95;
-}
-
-/* If URL is missing (href "#"), make it visually disabled */
-.popup-button[aria-disabled="true"] {
-    pointer-events: none;
-    opacity: 0.55;
-    box-shadow: none;
-}
-
-/* ---- Search Modal: remove the giant white slab ---- */
-.search-modal .modal-content {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-}
-
-.search-modal .modal-body {
-    padding: 18px;
-}
-
-/* The search bar container becomes the only visible "surface" */
-.search-modal-content {
-    max-width: 760px;
-    margin: auto;
-    padding: 0;
-}
-
-/* Make the modal input look like a crisp pill */
-.search-wrapper--modal .expandable-search-input {
-    border-radius: 999px;
-    height: 48px;
-    font-size: var(--fs-15);
-    box-shadow: 0 18px 60px rgba(15, 23, 42, 0.16);
-    border: 1px solid rgba(226,232,240,0.98);
-}
-
-/* Keep icon + clear aligned in the taller pill */
-.search-icon--modal {
-    left: 16px;
-    font-size: 0.95rem;
-}
-
-.search-clear-btn--modal {
-    right: 12px;
-    height: 34px;
-    width: 34px;
-}
-
-/* Dropdown in modal should also feel elevated */
-.expandable-search-dropdown {
-    margin-top: 10px;
-    border-radius: 14px;
-    border: 1px solid rgba(226,232,240,0.98);
-    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.18);
-}
-
-/* ---- Filter modal: more modern spacing & alignment ---- */
-.filter-modal .modal-content {
-    border-radius: 16px;
-    border: 1px solid rgba(226,232,240,0.98);
-    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.18);
-}
-
-.filter-modal .modal-header {
-    padding: 14px 16px;
-}
-
-.filter-modal .modal-body {
-    padding: 14px 16px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.filter-modal label {
-    font-weight: 750;
-    font-size: var(--fs-13);
-    color: var(--muted);
-    margin-bottom: 8px;
-}
-
-.filter-modal input[type="number"] {
-    height: 40px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    padding: 0 12px;
-}
-
-.filter-modal .modal-footer {
-    padding: 12px 16px 14px;
-}
-
-/* ================================
    PropertyInsights - main.css
    Standardized design system + UI polish
    ================================ */
@@ -606,88 +420,61 @@ html, body {
 /* ================================
    Map Popup Card (make it look good)
    ================================ */
-
-/* ================================
-   Popup attributes (beds/baths/land)
-   ================================ */
-
-.popup-features{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 2px;
-}
-
-.popup-feature{
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: 1px solid rgba(226,232,240,0.98);
-    background: #f8fafc;
-
-    font-size: var(--fs-13);
-    font-weight: 700;
-    color: var(--muted);
-}
-
-.popup-feature-icon{
-    color: var(--muted-2);
-    font-size: 0.9em;
-}
-
-.popup-feature-text{
-    line-height: 1;
-}
-
-/* Ensure Leaflet tooltip/popup container doesn't add ugly default padding */
-.popup-features {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--sp-8) var(--sp-10);
-    font-size: var(--fs-13);
-    color: var(--muted);
-}
-
-.popup-feature {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-8);
-    min-width: 0;
-}
-
-.popup-feature img {
-    width: 14px;
-    height: 14px;
-    opacity: 0.85;
-}
-
-/* CTA button: consistent with inputs/buttons elsewhere */
 .popup-button {
+    margin-top: var(--sp-8);
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin-top: var(--sp-6);
-    padding: 0.6rem 0.75rem;
+    gap: var(--sp-8);
+
+    height: 36px;
+    padding: 0 var(--sp-16);
+    width: fit-content;
+
+    border-radius: var(--r-md);
+    border: 1px solid var(--primary);
+
     background: var(--primary);
-    color: #ffffff;
-    text-align: center;
-    border-radius: 12px;
-    font-size: var(--fs-13);
-    font-weight: 750;
+    color: #fff;
+
     text-decoration: none;
-    transition: background-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
-    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
+    font-size: var(--fs-13);
+    font-weight: 700;
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.1s ease;
 }
 
 .popup-button:hover {
     background: var(--primary-600);
+    border-color: var(--primary-600);
+    box-shadow: var(--shadow-md);
 }
 
 .popup-button:active {
     transform: translateY(1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.popup-button:focus-visible {
+    box-shadow:
+        0 0 0 4px var(--ring),
+        var(--shadow-sm);
+}
+
+.popup-button[aria-disabled="true"] {
+    pointer-events: none;
+    background: #cbd5e1;
+    border-color: #cbd5e1;
+    color: #ffffff;
+    box-shadow: none;
+    opacity: 0.8;
 }
 
 /* Responsive */
@@ -732,6 +519,109 @@ html, body {
     transition: transform 0.15s ease;
 }
 
+/* ================================
+   Popup (map hover) + modal polish
+   ================================ */
+
+/* ---- Leaflet tooltip container cleanup (your tooltip is holding the popup-card) ---- */
+.leaflet-tooltip {
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+
+/* ---- Popup card: tighter + cleaner ---- */
+.popup-card {
+    width: 292px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid rgba(226,232,240,0.98);
+    box-shadow: 0 18px 55px rgba(15, 23, 42, 0.18);
+}
+
+.popup-image-wrapper {
+    background: var(--surface-2);
+}
+
+.popup-image {
+    width: 100%;
+    height: 154px;
+    object-fit: cover;
+    display: block;
+}
+
+.popup-content {
+    padding: 12px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.popup-title {
+    font-size: var(--fs-15);
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--text);
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;      /* prevents super tall cards */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.popup-price {
+    font-size: var(--fs-14);
+    font-weight: 800;
+    color: var(--primary);
+    margin: 0;
+}
+
+.popup-button {
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 36px;
+    padding: 0 12px;
+    width: fit-content;          /* avoids the giant full-width blue bar */
+    border-radius: 12px;
+
+    background: #66748f;
+    color: #fff;
+    text-decoration: none;
+    font-size: var(--fs-13);
+    font-weight: 800;
+
+    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
+    transition: background-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.popup-button:hover {
+    background: var(--primary-600);
+}
+
+.popup-button:active {
+    transform: translateY(1px);
+}
+
+.popup-cta-icon {
+    font-size: 0.85em;
+    opacity: 0.95;
+}
+
+/* If URL is missing (href "#"), make it visually disabled */
+.popup-button[aria-disabled="true"] {
+    pointer-events: none;
+    opacity: 0.55;
+    box-shadow: none;
+}
+
+
 .poi-fa-bubble:hover {
     transform: scale(1.15);
 }
@@ -759,4 +649,88 @@ html, body {
 .modal-content {
     box-shadow: 0 22px 70px rgba(15, 23, 42, 0.22);
     border: 1px solid rgba(226, 232, 240, 0.95);
+}
+
+
+/* ---- Search Modal: remove the giant white slab ---- */
+.search-modal .modal-content {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.search-modal .modal-body {
+    padding: 18px;
+}
+
+/* The search bar container becomes the only visible "surface" */
+.search-modal-content {
+    max-width: 760px;
+    margin: auto;
+    padding: 0;
+}
+
+/* Make the modal input look like a crisp pill */
+.search-wrapper--modal .expandable-search-input {
+    border-radius: 999px;
+    height: 48px;
+    font-size: var(--fs-15);
+    box-shadow: 0 18px 60px rgba(15, 23, 42, 0.16);
+    border: 1px solid rgba(226,232,240,0.98);
+}
+
+/* Keep icon + clear aligned in the taller pill */
+.search-icon--modal {
+    left: 16px;
+    font-size: 0.95rem;
+}
+
+.search-clear-btn--modal {
+    right: 12px;
+    height: 34px;
+    width: 34px;
+}
+
+/* Dropdown in modal should also feel elevated */
+.expandable-search-dropdown {
+    margin-top: 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(226,232,240,0.98);
+    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.18);
+}
+
+/* ---- Filter modal: more modern spacing & alignment ---- */
+.filter-modal .modal-content {
+    border-radius: 16px;
+    border: 1px solid rgba(226,232,240,0.98);
+    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.18);
+}
+
+.filter-modal .modal-header {
+    padding: 14px 16px;
+}
+
+.filter-modal .modal-body {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.filter-modal label {
+    font-weight: 750;
+    font-size: var(--fs-13);
+    color: var(--muted);
+    margin-bottom: 8px;
+}
+
+.filter-modal input[type="number"] {
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 0 12px;
+}
+
+.filter-modal .modal-footer {
+    padding: 12px 16px 14px;
 }

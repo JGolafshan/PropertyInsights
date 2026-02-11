@@ -13,7 +13,8 @@ from dash.exceptions import PreventUpdate
 
 from src.backend.database import get_filtered_properties, get_all_properties, get_total_property_count
 from src.backend.utils import run_async
-from src.frontend.compoments.side_menu import PropertyCard
+from src.frontend.compoments.property_hover_card import _attr_map
+from src.frontend.compoments.side_menu import PropertyCard, _get_land_size_display
 from src.backend.utils import format_price
 from src.frontend.compoments.map_view import PropertyMarker
 
@@ -38,7 +39,7 @@ def FilterModal():
                             dcc.RangeSlider(
                                 id="filter-price-range",
                                 min=100000,
-                                max=5000000,
+                                max=10000000,
                                 step=50000,
                                 marks={
                                     100000: "$100k",
@@ -46,6 +47,7 @@ def FilterModal():
                                     1000000: "$1M",
                                     2500000: "$2.5M",
                                     5000000: "$5M",
+                                    10000000: "$10M",
                                 },
                                 tooltip={"placement": "bottom", "always_visible": False},
                                 value=DEFAULT_PRICE_RANGE,
@@ -166,17 +168,22 @@ def register_filter_modal(app):
                 property_types=property_types or None,
                 min_bedrooms=min_bedrooms,
                 min_bathrooms=min_bathrooms,
-                limit=400,
             )
         )
 
         cards = [
             PropertyCard(
-                address=p.address.address_raw,
+                address=p.address.address_raw if p.address and p.address.address_raw else None,
                 price=format_price(p.price),
                 status=p.sale_type,
                 img_url=p.images[0].image_path if p.images else None,
                 property_id=str(p.id),
+                beds=_attr_map(p).get("bedrooms"),
+                baths=_attr_map(p).get("bathrooms"),
+                cars=_attr_map(p).get("car_spaces")
+                     or _attr_map(p).get("carspaces")
+                     or _attr_map(p).get("car space"),
+                land=_get_land_size_display(p),
             )
             for p in props
             if p and p.address
@@ -204,15 +211,21 @@ def register_filter_modal(app):
         if not n_clicks:
             raise PreventUpdate
 
-        props = run_async(get_all_properties(limit=400))
+        props = run_async(get_all_properties())
 
         cards = [
             PropertyCard(
-                address=p.address.address_raw,
+                address=p.address.address_raw if p.address and p.address.address_raw else None,
                 price=format_price(p.price),
                 status=p.sale_type,
                 img_url=p.images[0].image_path if p.images else None,
                 property_id=str(p.id),
+                beds=_attr_map(p).get("bedrooms"),
+                baths=_attr_map(p).get("bathrooms"),
+                cars=_attr_map(p).get("car_spaces")
+                     or _attr_map(p).get("carspaces")
+                     or _attr_map(p).get("car space"),
+                land=_get_land_size_display(p),
             )
             for p in props
             if p and p.address

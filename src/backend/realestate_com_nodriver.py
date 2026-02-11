@@ -6,20 +6,17 @@ Date: 02/09/2025
 Author: Joshua David Golafshan
 """
 
+import asyncio
 import re
-import time
 import logging
 import nodriver as uc
-import pandas as pd
 from geopy.geocoders import Nominatim
 from nodriver.core.element import Element
-
-from src.backend.application_constants import SAVE_LOCATION
-from src.backend.property_db_model import PropertyDocument
-from src.backend.property_pydantic_model import PropertyHistory
+from src.backend.database import insert_property, init_db
+from src.backend.property_pydantic_model import *
 
 NA_VALUE = "N/A"
-
+geolocator = Nominatim(user_agent="geoapiExample")
 
 class NoDriverScraper:
     def __init__(self, browser: uc.Browser, page: uc.Tab):
@@ -70,11 +67,20 @@ class NoDriverScraper:
 
 
 async def safe_find_async(fn, default=NA_VALUE):
+    """
+    Safely execute an async function and return default value on error.
+
+    Args:
+        fn: Async function to execute
+        default: Default value to return on error
+
+    Returns:
+        Function result or default value
+    """
     try:
         return await fn()
     except Exception as e:
-        print(f"[safe_find_async] Error: {e}")
-        print(f"[function is] Error: {fn.__name__}")
+        logging.getLogger(__name__).debug(f"safe_find_async error in {fn.__name__}: {e}")
         return default
 
 
@@ -91,131 +97,234 @@ async def get_attr_from(selector, attr, parent):
         return element.attrs.get(attr, NA_VALUE)
     return NA_VALUE
 
+def parse_price(price_text: str) -> Optional[PropertyPrice]:
+    if not price_text:
+        return None
+
+    text = price_text.lower().strip()
+
+    # Ignore non-numeric pricing
+    ignore_terms = [
+        "contact", "auction", "expression",
+        "price on application", "poa"
+    ]
+    if any(term in text for term in ignore_terms):
+        return None
+
+    # Helper to convert "$1.2m" -> 1200000
+    def to_number(value: str) -> float:
+        value = value.replace(",", "").strip()
+        multiplier = 1
+
+        if value.endswith("m"):
+            multiplier = 1_000_000
+            value = value[:-1]
+        elif value.endswith("k"):
+            multiplier = 1_000
+            value = value[:-1]
+
+        return float(value) * multiplier
+
+    # Extract numeric values
+    numbers = re.findall(r"\$?\s*([\d,.]+[mk]?)", text)
+    values = [to_number(n) for n in numbers]
+
+    # Case: "$X - $Y"
+    if "-" in text and len(values) >= 2:
+        return PropertyPrice(
+            actual_price=0.0,
+            min_price_guide=values[0],
+            max_price_guide=values[1],
+        )
+
+    # Case: "greater than $X", "from $X", "$X+"
+    if any(term in text for term in ["greater", "from", "+", "over"]):
+        return PropertyPrice(
+            actual_price=0.0,
+            min_price_guide=values[0],
+            max_price_guide=0.0,
+        )
+
+    # Case: "$X"
+    if len(values) == 1:
+        return PropertyPrice(
+            actual_price=values[0],
+            min_price_guide=values[0],
+            max_price_guide=values[0],
+        )
+
+    return None
+
 
 async def extract_card_details(card):
-    price = await safe_find_async(lambda: get_text_from("span.property-price ", card))
-    address = await safe_find_async(lambda: get_text_from("h2.residential-card__address-heading", card))
-    image = await safe_find_async(lambda: get_attr_from("div.property-image", "data-url", card))
-    url_link = await safe_find_async(lambda: get_attr_from("h2.residential-card__address-heading a", "href", card))
+    try:
+        price_text = await safe_find_async(
+            lambda: get_text_from("span.property-price", card)
+        )
+        address = await safe_find_async(
+            lambda: get_text_from("h2.residential-card__address-heading", card)
+        )
+        image_url = await safe_find_async(
+            lambda: get_attr_from("div.property-image", "data-url", card)
+        )
+        url_link = await safe_find_async(
+            lambda: get_attr_from(
+                "h2.residential-card__address-heading a", "href", card
+            )
+        )
 
-    # make sure it contains the domain
-    url_complete = "https://www.realestate.com.au" + url_link
+        async def get_land_size():
+            land_li = await card.query_selector("li[aria-label*='land size'] p")
+            return land_li.text if land_li else None
 
-    residential_data = await safe_find_async(lambda: card.query_selector("ul.residential-card__primary"))
-    if not residential_data:
-        return None
+        if not url_link:
+            return None
 
-    div_container = await safe_find_async(lambda: residential_data.query_selector("div"))
-    if not div_container:
-        return None
+        url_complete = "https://www.realestate.com.au" + url_link
 
-    room_data = await safe_find_async(lambda: div_container.query_selector_all("li"), [])
-    standard_room_types = ["bathroom", "bedroom", "car space", "with study"]
-    room_dict = {}
+        residential_data = await safe_find_async(
+            lambda: card.query_selector("ul.residential-card__primary")
+        )
+        if not residential_data:
+            return None
 
-    for room in room_data:
-        aria_label = room.attrs.get("aria-label", NA_VALUE)
-        if not aria_label:
-            continue
-        aria_label = aria_label.lower()
 
-        async def get_number_text():
+        room_items = await safe_find_async(
+            lambda: residential_data.query_selector_all("li"), []
+        )
+
+        standard_room_types = {
+            "bedroom": "bedrooms",
+            "bathroom": "bathrooms",
+            "car space": "car_spaces",
+            "with study": "studies",
+        }
+
+        attributes: list[PropertyAttributes] = []
+
+        for room in room_items:
+            aria_label = room.attrs.get("aria-label", "")
+            if not aria_label:
+                continue
+
+            aria_label = aria_label.lower()
+
             p = await room.query_selector("p")
-            return p.text if p else None
+            if not p or not p.text or not p.text.isdigit():
+                continue
 
-        number_text = await safe_find_async(get_number_text)
+            count = int(p.text)
 
-        matched_key = None
-        for room_type in standard_room_types:
-            if room_type in aria_label:
-                matched_key = room_type
-                break
+            for key, normalized_name in standard_room_types.items():
+                if key in aria_label:
+                    attributes.append(
+                        PropertyAttributes(
+                            attribute_name=normalized_name,
+                            attribute_count=count,
+                        )
+                    )
+                    break
 
-        if matched_key and number_text and number_text.isdigit():
-            room_dict[matched_key] = int(number_text)
+        # -------------------------
+        # Property type
+        # -------------------------
+        async def get_property_type():
+            ps = await residential_data.query_selector_all("p")
+            return ps[-1].text if ps else "UNKNOWN"
 
-    async def get_property_type():
-        ps = await residential_data.query_selector_all("p")
-        if ps:
-            last_p = ps[-1]
-            return last_p.text
-        return NA_VALUE
+        property_type = await get_property_type()
 
-    async def get_land_size():
-        land_li = await card.query_selector("li[aria-label*='land size'] p")
-        return land_li.text if land_li else NA_VALUE
+        # -------------------------
+        # Price (basic parsing)
+        # -------------------------
+        images = []
+        if image_url:
+            images.append(
+                Images(
+                    image_path=image_url,
+                    is_primary=True,
+                )
+            )
 
-    return {
-        "price": price,
-        "thumbnail": image,
-        "address": address,
-        "lat": -1,
-        "long": -1,
-        "url": url_complete,
-        "land_size": await get_land_size(),
-        "estate_type": await get_property_type(),
-        "property_rooms": room_dict,
-        # "property_features": {
-        #     "hasPool": random.choice([True, False]),
-        #     "hasGarage": random.choice([True, False]),
-        #     "hasSolarPanels": random.choice([True, False]),
-        #     "hasAirCon": random.choice([True, False]),
-        #     "hasHeating": random.choice([True, False]),
-        #     "hasNBN": random.choice([True, False])
-        # }
-    }
+        address_model = None
+
+        if address:
+            cleaned_address = re.sub(r"^\s*\d+[/-]", "", address.strip())
+
+            try:
+                loop = asyncio.get_running_loop()
+                # Add timeout to prevent hanging on slow geocoding
+                location = await asyncio.wait_for(
+                    loop.run_in_executor(
+                        None, lambda: geolocator.geocode(cleaned_address)
+                    ),
+                    timeout=5.0
+                )
+            except (Exception, asyncio.TimeoutError) as e:
+                logging.getLogger(__name__).debug(f"Geocoding failed for {cleaned_address}: {e}")
+                location = None
+
+            if location:
+                address_model = PropertyAddress(
+                    address_raw=cleaned_address,
+                    latitude=location.latitude,
+                    longitude=location.longitude,
+                )
+
+        property_data = Property(
+            url=url_complete,
+            sale_type="Active",
+            land_size=await get_land_size(),
+            property_type=property_type,
+            price=parse_price(price_text),
+            images=images,
+            address=address_model,
+            features=[],
+            attributes=attributes,
+        )
+
+        logging.getLogger(__name__).info(f"Extracted property: {property_data.address.address_raw if property_data.address else 'Unknown'}")
+        return property_data
+
+    except Exception as e:
+        print("an error occured")
+        return None
+
 
 
 async def main(output_format="csv", output_filename="realestate_data"):
-    geolocator = Nominatim(user_agent="geoapiExample")
     browser = await uc.start(headless=False)
     page = await browser.get()
     scraper = NoDriverScraper(browser, page)
-    all_cards = []
+    await init_db()
 
-    for page_num in range(1, 80):
-        url = f"https://www.realestate.com.au/buy/in-nsw/list-{page_num}"
-        response = await page.get(url)
+    state_list = ["nsw", "wa", "act", "sa", "nt", "qld", "tas"]
+    for state in state_list:
+        for page_num in range(1, 40):
+            url = f"https://www.realestate.com.au/buy/in-{state}/list-{page_num}"
+            response = await page.get(url)
 
-        await scraper.wait_for_page()
-        time.sleep(10)
+            await scraper.wait_for_page()
+            # Reduced sleep time - page is ready after wait_for_page()
+            await asyncio.sleep(2)
 
-        cards = await response.query_selector_all("article[data-testid='ResidentialCard']")
-        if not cards:
-            break
+            cards = await response.query_selector_all(
+                "article[data-testid='ResidentialCard']"
+            )
+            if not cards:
+                break
 
-        for card in cards:
-            try:
-                card_details = await extract_card_details(card)
-                raw_address = str(card_details.get("address"))
-                cleaned_address = re.sub(r"^\s*\d+[/-]", "", raw_address.strip()) if raw_address else ""
-                print(cleaned_address)
+            for card in cards:
+                try:
+                    property_data = await extract_card_details(card)
+                    if not property_data:
+                        continue
 
-                location = geolocator.geocode(cleaned_address)
-                if location:
-                    card_details["lat"] = location.latitude
-                    card_details["long"] = location.longitude
-                all_cards.append(card_details)
-            except Exception:
-                pass
+                    await insert_property(property_data)
 
-        time.sleep(2)
-        break
+                except Exception as e:
+                    logging.getLogger(__name__).error(f"Error processing card on page {page_num}: {e}", exc_info=True)
 
-    df = pd.json_normalize(all_cards)
-
-    # Export
-    path = f"{SAVE_LOCATION}/{output_filename}.{output_format}"
-    if output_format == "csv":
-        df.to_csv(path, index=False)
-    elif output_format == "xlsx":
-        df.to_excel(path, index=False)
-    elif output_format == "json":
-        df.to_json(path, orient="records", indent=4)
-    else:
-        raise ValueError(f"Unsupported export format: {output_format}")
-
-    print(f"✅ Data saved to: {path}")
 
 
 if __name__ == "__main__":

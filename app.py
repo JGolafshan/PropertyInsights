@@ -43,12 +43,6 @@ app = Dash(
     ],
 )
 
-register_filter_modal(app)
-register_poi_modal(app)
-register_ed_modal(app)
-register_search_callbacks(app)
-register_property_card_callbacks(app, data)
-
 
 app.layout = html.Div(
     id="app_container",
@@ -57,6 +51,7 @@ app.layout = html.Div(
         dcc.Store(id="selected-location"),
         dcc.Store(id="selected-pois", data=[]),
         dcc.Store(id="poi-data", data=[]),
+        dcc.Store(id="selected-dimension-points", data=[]),
 
         FilterModal(),
         PointOfInterestModal(),
@@ -96,7 +91,11 @@ app.layout = html.Div(
 register_map_callbacks(app)
 register_search_modal_callbacks(app)
 register_search_modal_toggle(app)
-
+register_filter_modal(app)
+register_poi_modal(app)
+register_ed_modal(app)
+register_search_callbacks(app)
+register_property_card_callbacks(app, data)
 
 if __name__ == "__main__":
     app.run(debug=True)
