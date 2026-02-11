@@ -26,11 +26,12 @@ def ExternalDataModal():
 def register_ed_modal(app):
     @app.callback(
         Output("ed-modal", "is_open"),
-        Input("ed-modal-open", "n_clicks"),
+        Input("ed-modal-open-desktop", "n_clicks"),
+        Input("ed-modal-open-mobile", "n_clicks"),
         Input("ed-modal-close", "n_clicks"),
         State("ed-modal", "is_open"),
     )
-    def toggle_ed_modal(open, close, is_open):
-        if open or close:
+    def toggle_ed_modal(_open_desktop, _open_mobile, close, is_open):
+        if _open_desktop or _open_mobile or close:
             return not is_open
         return is_open

@@ -24,21 +24,25 @@ class PropertyAttributes(BaseModel):
     attribute_name: str
     attribute_count: int
 
-class PropertyHistory(BaseModel):
-    """Historical or current listing information for a property."""
-    is_current: bool = True
-    price: float
+class PropertyAddress(BaseModel):
+    """Represents a property address."""
+    address_raw: str
+    longitude: float
+    latitude: float
+
+class PropertyPrice(BaseModel):
+    """Represents a price of the property."""
+    actual_price: float
+    min_price_guide: float
+    max_price_guide: float
+
+class Property(BaseModel):
+    """Represents a property"""
     url: str
     sale_type: str
-    price_range: str
     property_type: str
+    address: Optional[PropertyAddress]
+    price: Optional[PropertyPrice] = None
     images: Optional[List[Images]] = Field(default_factory=list)
     features: Optional[List[PropertyFeatures]] = Field(default_factory=list)
     attributes: Optional[List[PropertyAttributes]] = Field(default_factory=list)
-
-class Property(BaseModel):
-    """Represents a property with location and listing history."""
-    address: str
-    longitude: float
-    latitude: float
-    history_arr: Optional[List[PropertyHistory]] = Field(default_factory=list)

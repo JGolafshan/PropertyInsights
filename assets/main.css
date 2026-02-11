@@ -1,31 +1,291 @@
+/* ================================
+   Popup (map hover) + modal polish
+   ================================ */
+
+/* ---- Leaflet tooltip container cleanup (your tooltip is holding the popup-card) ---- */
+.leaflet-tooltip {
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+}
+
+/* ---- Popup card: tighter + cleaner ---- */
+.popup-card {
+    width: 292px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid rgba(226,232,240,0.98);
+    box-shadow: 0 18px 55px rgba(15, 23, 42, 0.18);
+}
+
+.popup-image-wrapper {
+    background: var(--surface-2);
+}
+
+.popup-image {
+    width: 100%;
+    height: 154px;
+    object-fit: cover;
+    display: block;
+}
+
+.popup-content {
+    padding: 12px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.popup-title {
+    font-size: var(--fs-15);
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--text);
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;      /* prevents super tall cards */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.popup-price {
+    font-size: var(--fs-14);
+    font-weight: 800;
+    color: var(--primary);
+    margin: 0;
+}
+
+.popup-button {
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    height: 36px;
+    padding: 0 12px;
+    width: fit-content;          /* avoids the giant full-width blue bar */
+    border-radius: 12px;
+
+    background: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    font-size: var(--fs-13);
+    font-weight: 800;
+
+    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
+    transition: background-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.popup-button:hover {
+    background: var(--primary-600);
+}
+
+.popup-button:active {
+    transform: translateY(1px);
+}
+
+.popup-cta-icon {
+    font-size: 0.85em;
+    opacity: 0.95;
+}
+
+/* If URL is missing (href "#"), make it visually disabled */
+.popup-button[aria-disabled="true"] {
+    pointer-events: none;
+    opacity: 0.55;
+    box-shadow: none;
+}
+
+/* ---- Search Modal: remove the giant white slab ---- */
+.search-modal .modal-content {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.search-modal .modal-body {
+    padding: 18px;
+}
+
+/* The search bar container becomes the only visible "surface" */
+.search-modal-content {
+    max-width: 760px;
+    margin: auto;
+    padding: 0;
+}
+
+/* Make the modal input look like a crisp pill */
+.search-wrapper--modal .expandable-search-input {
+    border-radius: 999px;
+    height: 48px;
+    font-size: var(--fs-15);
+    box-shadow: 0 18px 60px rgba(15, 23, 42, 0.16);
+    border: 1px solid rgba(226,232,240,0.98);
+}
+
+/* Keep icon + clear aligned in the taller pill */
+.search-icon--modal {
+    left: 16px;
+    font-size: 0.95rem;
+}
+
+.search-clear-btn--modal {
+    right: 12px;
+    height: 34px;
+    width: 34px;
+}
+
+/* Dropdown in modal should also feel elevated */
+.expandable-search-dropdown {
+    margin-top: 10px;
+    border-radius: 14px;
+    border: 1px solid rgba(226,232,240,0.98);
+    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.18);
+}
+
+/* ---- Filter modal: more modern spacing & alignment ---- */
+.filter-modal .modal-content {
+    border-radius: 16px;
+    border: 1px solid rgba(226,232,240,0.98);
+    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.18);
+}
+
+.filter-modal .modal-header {
+    padding: 14px 16px;
+}
+
+.filter-modal .modal-body {
+    padding: 14px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.filter-modal label {
+    font-weight: 750;
+    font-size: var(--fs-13);
+    color: var(--muted);
+    margin-bottom: 8px;
+}
+
+.filter-modal input[type="number"] {
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 0 12px;
+}
+
+.filter-modal .modal-footer {
+    padding: 12px 16px 14px;
+}
+
+/* ================================
+   PropertyInsights - main.css
+   Standardized design system + UI polish
+   ================================ */
+
+:root{
+    /* Typography (more native / less "standout") */
+    --font: "Segoe UI", system-ui, -apple-system, Roboto, Arial, "Noto Sans", sans-serif;
+
+    --fs-12: 0.75rem;
+    --fs-13: 0.8125rem;
+    --fs-14: 0.875rem;
+    --fs-15: 0.9375rem;
+    --fs-16: 1rem;
+    --fs-18: 1.125rem;
+    --fs-20: 1.25rem;
+
+    --lh-tight: 1.2;
+    --lh-normal: 1.45;
+
+    /* Spacing scale (8pt-ish) */
+    --sp-4: 0.25rem;
+    --sp-6: 0.375rem;
+    --sp-8: 0.5rem;
+    --sp-10: 0.625rem;
+    --sp-12: 0.75rem;
+    --sp-14: 0.875rem;
+    --sp-16: 1rem;
+    --sp-20: 1.25rem;
+    --sp-24: 1.5rem;
+
+    /* Radius */
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 16px;
+    --r-pill: 999px;
+
+    /* Neutral palette */
+    --bg: #f6f8fb;
+    --surface: #ffffff;
+    --surface-2: #f8fafc;
+    --text: #0f172a;
+    --muted: #334155;
+    --muted-2: #64748b;
+    --border: #e2e8f0;
+
+    /* Accent */
+    --primary: #2563eb;
+    --primary-600: #1d4ed8;
+    --ring: rgba(37, 99, 235, 0.22);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+    --shadow-md: 0 10px 28px rgba(15, 23, 42, 0.10);
+    --shadow-lg: 0 18px 60px rgba(15, 23, 42, 0.14);
+
+    /* Layout */
+    --navbar-h: 56px;
+}
+
 /* Global Reset & Base */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    color: #111827;
-    background-color: #f9fafb;
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: var(--lh-normal);
+    color: var(--text);
+    background-color: var(--bg);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-*, *::before, *::after {
-    box-sizing: border-box;
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Accessible focus */
+:focus { outline: none; }
+:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
 }
+
+::selection { background: rgba(37, 99, 235, 0.18); }
 
 /* Layout */
-.container-fluid {
-    padding: 0;
-}
+.container-fluid { padding: 0; }
 
 #app_container {
     height: 100vh;
+    height: 100dvh;
     overflow: hidden;
+    background: var(--bg);
 }
 
+/* Main content row */
 .row {
     height: 100%;
     margin: 0;
     display: flex;
+    padding-top: 0;
 }
 
 .col-3, .col-9,
@@ -34,187 +294,236 @@ html, body {
     padding: 0;
 }
 
-/* Sidebar */
+/* Sidebar (standardized spacing) */
 .sidebar {
     height: 100%;
-    overflow-y: auto;
-    background: #ffffff;
-    border-right: 1px solid #e5e7eb;
-    padding: 0.75rem 0;
+    overflow: hidden;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
-/* Sidebar header */
+/* Fixed sidebar header */
+#property-selector {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--surface);
+    padding: var(--sp-12) 0 0;
+    border-bottom: 1px solid var(--border);
+}
+
 .sidebar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1rem;
+    padding: var(--sp-12) var(--sp-16);
+    gap: var(--sp-12);
 }
 
 .sidebar-title {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: var(--fs-16);
+    font-weight: 750;
+    line-height: var(--lh-tight);
     margin: 0;
+    letter-spacing: -0.015em;
+    color: var(--text);
+}
+
+.sidebar-count{
+    font-size: var(--fs-13);
+    color: var(--muted-2);
+    font-weight: 600;
+    margin-top: var(--sp-4);
 }
 
 #options-list {
     display: flex;
-    gap: 0.75rem;
+    gap: var(--sp-12);
+    align-items: center;
 }
 
 /* Icons */
 .icon {
     cursor: pointer;
     font-size: 1rem;
-    color: #6b7280;
-    transition: color 0.2s ease;
+    color: var(--muted-2);
+    transition: color 0.15s ease, transform 0.12s ease;
 }
+.icon:hover { color: var(--text); transform: translateY(-1px); }
 
-.icon:hover {
-    color: #111827;
-}
-
-/* Property List */
-#property-selector {
-    margin-top: 0.5rem;
-}
-
+/* Property list scroll only */
 #property-list {
-    padding: 0.5rem 0.75rem;
+    padding: var(--sp-10) var(--sp-12) var(--sp-16);
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
-/* Property Card */
+/* Property list scrollbar polish (WebKit) */
+#property-list::-webkit-scrollbar { width: 10px; }
+#property-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: var(--r-pill);
+    border: 2px solid var(--surface);
+}
+#property-list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Property Card (standardized typography + spacing) */
 .property-card.horizontal {
     display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    background: #ffffff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
+    gap: var(--sp-12);
+    padding: var(--sp-14);
+    margin-bottom: var(--sp-12);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    will-change: transform;
 }
-
 .property-card.horizontal:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-    border-color: #d1d5db;
+    box-shadow: var(--shadow-md);
+    border-color: #cbd5e1;
 }
 
 .property-thumbnail {
     width: 112px;
     height: 84px;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: var(--r-sm);
     flex-shrink: 0;
+    background: var(--surface-2);
+    border: 1px solid rgba(226,232,240,0.95);
 }
 
 .property-info {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: var(--sp-6);
+    min-width: 0;
 }
 
 .property-address {
-    font-size: 0.95rem;
-    font-weight: 600;
+    font-size: var(--fs-15);
+    font-weight: 750;
+    letter-spacing: -0.01em;
+    line-height: var(--lh-tight);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .property_supplemental {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
+    gap: var(--sp-10);
+    margin-top: var(--sp-4);
+    flex-wrap: wrap;
 }
 
 .property-price {
-    font-size: 0.85rem;
-    color: #4b5563;
+    font-size: var(--fs-13);
+    color: var(--muted);
+    font-weight: 650;
 }
 
-/* Status badges */
+.property-meta{
+    display: flex;
+    gap: var(--sp-10);
+    flex-wrap: wrap;
+    margin-top: var(--sp-6);
+    color: var(--muted-2);
+    font-size: var(--fs-13);
+    font-weight: 650;
+}
+
+.property-meta-chip{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    border-radius: var(--r-pill);
+    border: 1px solid rgba(226,232,240,0.98);
+    background: #f8fafc;
+}
+
+.property-meta-chip i{
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+/* Status badges (standardized) */
 .property-status {
-    font-size: 0.7rem;
-    font-weight: 500;
-    padding: 0.15rem 0.4rem;
-    border-radius: 999px;
+    font-size: var(--fs-12);
+    font-weight: 700;
+    padding: 0.18rem 0.55rem;
+    border-radius: var(--r-pill);
     text-transform: capitalize;
+    border: 1px solid rgba(15, 23, 42, 0.06);
 }
+.property-status.active { background: #eaf7ef; color: #116a37; }
+.property-status.under-offer { background: #fff4e5; color: #92400e; }
+.property-status.sold { background: #fde8e8; color: #991b1b; }
 
-.property-status.active {
-    background: #e6f4ea;
-    color: #137333;
-}
-
-.property-status.under-offer {
-    background: #fff4e5;
-    color: #b45309;
-}
-
-.property-status.sold {
-    background: #fde8e8;
-    color: #b91c1c;
-}
-
-/* Map  */
-#property-map {
-    height: 100%;
-    min-height: 0;
-    padding: 0;
-}
-
-
-/* Navbar */
+/* Navbar (typography + spacing aligned) */
 .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--navbar-h);
     justify-content: space-between;
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    padding: 0.5rem 1rem;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
-    z-index: 1000;
-}
 
-.navbar-search {
-    display: flex;
-    justify-content: center;
+    padding: var(--sp-12) var(--sp-16);
+    background-color: rgba(255,255,255,0.86);
+    border-bottom: 1px solid rgba(226,232,240,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
 }
 
 .navbar-brand {
-    font-weight: 600;
-    font-size: 1rem;
-    color: #111827;
+    font-weight: 850;
+    font-size: var(--fs-14);
+    letter-spacing: -0.015em;
+    color: var(--text);
 }
 
 .navbar-links {
     display: flex;
-    gap: 0.75rem;
+    gap: var(--sp-12);
+    align-items: center;
 }
 
+/* Inputs (standardized) */
 .search-wrapper {
     position: relative;
     width: 100%;
-    max-width: 620px;
+    max-width: 640px;
 }
 
 .search-input {
     width: 100%;
-    padding: 0.5rem 0.75rem 0.5rem 2.25rem;
-    border-radius: 999px;
-    border: 1px solid #e5e7eb;
-    font-size: 0.85rem;
-    outline: none;
-    background: #ffffff;
+    height: 40px;
+    padding: 0.5rem 2.35rem 0.5rem 2.25rem;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--border);
+    font-size: var(--fs-14);
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.02);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
 }
-
 .search-input:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 4px var(--ring);
+    background: #ffffff;
 }
 
 .search-icon {
@@ -222,285 +531,232 @@ html, body {
     left: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 0.8rem;
-    color: #9ca3af;
+    font-size: 0.9rem;
+    color: #94a3b8;
+    pointer-events: none;
 }
 
-/* Dropdown */
-.search-dropdown {
+.search-clear-btn{
     position: absolute;
-    top: calc(100% + 6px);
-    width: 100%;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
-    overflow: hidden;
-    display: none; /* toggle via callback later */
-    z-index: 2000;
-}
-
-.search-option {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.85rem;
+    right: 0.55rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 28px;
+    width: 28px;
+    border-radius: var(--r-pill);
+    border: 1px solid rgba(226,232,240,0.95);
+    background: rgba(255,255,255,0.98);
+    color: var(--muted-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
     cursor: pointer;
 }
+.search-clear-btn:hover{ color: var(--text); border-color: #cbd5e1; }
 
-.search-option:hover {
-    background: #f3f4f6;
-}
+/* Modal input aligned to same system */
+.search-modal-content { max-width: 760px; margin: auto; }
 
+.search-wrapper--modal{ position: relative; }
 
-/* Map Popup Card */
-.popup-card {
-    width: 260px;
-    border-radius: 10px;
-    overflow: hidden;
-    background: #ffffff;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.15);
-}
+.search-icon--modal{ left: 1rem; font-size: 0.95rem; }
 
-.popup-image {
+.expandable-search-input {
     width: 100%;
-    height: 140px;
-    object-fit: cover;
+    padding: 14px 48px 14px 44px;
+    font-size: var(--fs-16);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--border);
+    background: #ffffff;
+    box-shadow: var(--shadow-sm);
+}
+.expandable-search-input:focus {
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow: 0 0 0 4px var(--ring), var(--shadow-sm);
 }
 
-.popup-content {
-    padding: 0.75rem;
+.search-clear-btn--modal{
+    right: 0.85rem;
+    height: 34px;
+    width: 34px;
 }
 
-.popup-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin: 0 0 0.25rem;
+/* Dropdowns (consistent) */
+.search-dropdown,
+.expandable-search-dropdown {
+    border: 1px solid rgba(226,232,240,0.95);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
 }
 
-.popup-price {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #2563eb;
-    margin-bottom: 0.5rem;
+.navbar .search-option,
+.search-modal .search-option {
+    padding: var(--sp-12) var(--sp-14);
+    font-size: var(--fs-14);
+    cursor: pointer;
+    color: var(--text);
+}
+.navbar .search-option:hover,
+.search-modal .search-option:hover { background: #f1f5f9; }
+
+/* ================================
+   Map Popup Card (make it look good)
+   ================================ */
+
+/* ================================
+   Popup attributes (beds/baths/land)
+   ================================ */
+
+.popup-features{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
 }
 
+.popup-feature{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(226,232,240,0.98);
+    background: #f8fafc;
+
+    font-size: var(--fs-13);
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.popup-feature-icon{
+    color: var(--muted-2);
+    font-size: 0.9em;
+}
+
+.popup-feature-text{
+    line-height: 1;
+}
+
+/* Ensure Leaflet tooltip/popup container doesn't add ugly default padding */
 .popup-features {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.4rem;
-    font-size: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-8) var(--sp-10);
+    font-size: var(--fs-13);
+    color: var(--muted);
 }
 
 .popup-feature {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: var(--sp-8);
+    min-width: 0;
 }
 
 .popup-feature img {
     width: 14px;
     height: 14px;
+    opacity: 0.85;
 }
 
+/* CTA button: consistent with inputs/buttons elsewhere */
 .popup-button {
-    display: block;
-    margin-top: 0.6rem;
-    padding: 0.4rem;
-    background: #2563eb;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--sp-6);
+    padding: 0.6rem 0.75rem;
+    background: var(--primary);
     color: #ffffff;
     text-align: center;
-    border-radius: 6px;
-    font-size: 0.75rem;
+    border-radius: 12px;
+    font-size: var(--fs-13);
+    font-weight: 750;
     text-decoration: none;
+    transition: background-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.18);
 }
 
-
-/* Modals - Search Bar  */
-.search-modal {
-    backdrop-filter: blur(12px);
+.popup-button:hover {
+    background: var(--primary-600);
 }
 
-.search-modal-content {
-    max-width: 700px;
-    margin: auto;
+.popup-button:active {
+    transform: translateY(1px);
 }
 
-.expandable-search-input {
-    width: 100%;
-    padding: 18px;
-    font-size: 1.3rem;
-    border-radius: 12px;
-    border: none;
-}
-
-.expandable-search-dropdown {
-    margin-top: 10px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-.search-option {
-    padding: 14px;
-    cursor: pointer;
-}
-
-.search-option:hover {
-    background: #f3f4f6;
-}
-
-
-/* Modal content */
-#poi-modal .modal-content {
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-/* Modal title */
-#poi-modal .poi-modal-title {
-    text-align: center;
-    font-weight: 600;
-    font-size: 1.5rem;
-}
-
-/* Modal body */
-#poi-modal .poi-modal-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* POI rows */
-#poi-modal .poi-row {
-    width: 100%;
-}
-
-/* Checkbox styling */
-#poi-modal .poi-checkbox .form-check-input {
-    width: 1.25rem;
-    height: 1.25rem;
-    cursor: pointer;
-    margin-right: 0.5rem;
-}
-
-#poi-modal .poi-checkbox .form-check-label {
-    cursor: pointer;
-    font-size: 1rem;
-    transition: color 0.2s;
-}
-
-#poi-modal .poi-checkbox .form-check-label:hover {
-    color: #0d6efd;
-}
-
-/* Footer button */
-#poi-modal .poi-close-btn {
-    justify-self: flex-end;
-}
-
-
-/* ============================= */
-/* Filter Modal Styling           */
-/* ============================= */
-
-/* Modal general */
-.filter-modal .modal-content {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 16px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
-    padding: 20px;
-}
-
-/* Modal header */
-.filter-modal .modal-header {
-    border-bottom: none;
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-/* Modal body */
-.filter-modal .modal-body {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* Labels */
-.filter-modal label {
-    font-weight: 500;
-    margin-bottom: 6px;
-    display: block;
-}
-
-/* Range slider */
-.filter-modal .rc-slider {
-    margin-top: 10px;
-}
-
-.filter-modal .rc-slider-handle {
-    border: 2px solid #2563eb;
-    background-color: #fff;
-}
-
-.filter-modal .rc-slider-track {
-    background-color: #2563eb;
-}
-
-/* Input fields */
-.filter-modal input[type="number"] {
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    padding: 8px 10px;
-    width: 100px;
-}
-
-/* Dropdowns */
-.filter-modal .Select__control {
-    border-radius: 8px;
-    font-size: 1rem;
-    border: 1px solid #d1d5db;
-}
-
-/* Checklist features */
-.filter-modal .dash-checklist label {
-    margin-right: 12px;
-    font-weight: 400;
-}
-
-/* Modal footer buttons */
-.filter-modal .modal-footer {
-    border-top: none;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-.filter-modal .modal-footer .btn-primary {
-    background-color: #2563eb;
-    border-color: #2563eb;
-}
-
-.filter-modal .modal-footer .btn-primary:hover {
-    background-color: #1d4ed8;
-    border-color: #1d4ed8;
-}
-
-.filter-modal .modal-footer .btn-secondary {
-    background-color: #f3f4f6;
-    border-color: #d1d5db;
-    color: #111827;
-}
-
-.filter-modal .modal-footer .btn-secondary:hover {
-    background-color: #e5e7eb;
-    border-color: #d1d5db;
-}
-
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 768px) {
-    .filter-modal .modal-content {
-        padding: 15px;
+    :root { --navbar-h: 56px; }
+
+    .navbar {
+        padding: var(--sp-10) var(--sp-12);
+        grid-template-columns: 1fr auto;
+        gap: var(--sp-10);
     }
-    .filter-modal input[type="number"] {
-        width: 80px;
-    }
+
+    .navbar-search { display: none; }
+}
+
+/* Ensure popup content can be interacted with */
+.property-popup .leaflet-popup-content-wrapper,
+.property-popup .leaflet-popup-content {
+    pointer-events: auto;
+}
+
+/* Optional: reduce Leaflet default popup padding so your card fits nicely */
+.property-popup .leaflet-popup-content {
+    margin: 0;
+}
+
+.property-popup .leaflet-popup-content-wrapper {
+    padding: 0;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.poi-fa-bubble {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    transition: transform 0.15s ease;
+}
+
+.poi-fa-bubble:hover {
+    transform: scale(1.15);
+}
+
+.poi-fa-bubble i {
+    font-size: 12px;
+}
+
+.poi-fa-icon {
+    pointer-events: auto;
+}
+
+
+.modal-backdrop {
+    background-color: rgba(15, 23, 42, 0.38);  /* slightly darker tint */
+}
+
+.modal-backdrop.show {
+    opacity: 1;                                /* ensure our rgba controls the tint */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);       /* Safari */
+}
+
+/* Optional: make modal content feel crisper above the blur */
+.modal-content {
+    box-shadow: 0 22px 70px rgba(15, 23, 42, 0.22);
+    border: 1px solid rgba(226, 232, 240, 0.95);
 }

@@ -6,29 +6,21 @@ Date: 04/02/2025
 Author: Joshua David Golafshan
 """
 
-import pandas as pd
 from dash import html, dcc
 from dash.exceptions import PreventUpdate
 from dash import Input, Output, State, ALL
-from src.backend.application_constants import SAVE_LOCATION
 
-POSTCODES_DF = pd.read_csv(SAVE_LOCATION / "au_postcodes.csv", dtype={"postcode": str})
+from src.frontend.compoments.location_search import (
+    build_option_divs,
+    search_postcodes,
+)
 
-# Create a display label once
-POSTCODES_DF["label"] = (POSTCODES_DF["place_name"] + ", " + POSTCODES_DF["state_code"] + " " + POSTCODES_DF["postcode"])
 
 def Navbar():
     return html.Nav(
         className="navbar",
         children=[
-
-            # Left: Brand
-            html.Div(
-                "Property Insights",
-                className="navbar-brand"
-            ),
-
-            # Center: Search
+            html.Div("Property Insights", className="navbar-brand"),
             html.Div(
                 className="navbar-search",
                 children=[
@@ -36,71 +28,78 @@ def Navbar():
                         className="search-wrapper",
                         children=[
                             html.I(className="fas fa-search search-icon"),
-
                             dcc.Input(
                                 id="property-search",
                                 type="text",
                                 placeholder="Search suburb, postcode",
                                 className="search-input",
+                                debounce=False,
+                                autoComplete="off",
                             ),
-
+                            html.Button(
+                                html.I(className="fas fa-xmark"),
+                                id="property-search-clear",
+                                className="search-clear-btn",
+                                n_clicks=0,
+                                type="button",
+                                style={"display": "none"},
+                            ),
                             html.Div(
                                 id="search-dropdown",
                                 className="search-dropdown",
-                                children=[
-                                    html.Div("Sydney NSW", className="search-option"),
-                                    html.Div("Melbourne VIC", className="search-option"),
-                                ],
+                                children=[],
                             ),
                         ],
                     )
                 ],
             ),
-
-            # Right: Icons
             html.Div(
                 className="navbar-links",
                 children=[
-                    html.I(className="fas fa-cog icon", id="filter-modal-open"),
-                    html.I(className="fas fa-layer-group icon", id="poi-modal-open"),
-                    html.I(className="fas fa-road icon", id="ed-modal-open"),
+                    html.I(className="fas fa-magnifying-glass icon none", id="search-modal-open-mobile"),
+                    html.I(className="fas fa-cog icon", id="filter-modal-open-mobile"),
+                    html.I(className="fas fa-layer-group icon", id="poi-modal-open-mobile"),
+                    html.I(className="fas fa-road icon", id="ed-modal-open-mobile"),
                 ],
             ),
         ],
     )
 
-def register_search_callbacks(app):
 
+def register_search_callbacks(app):
     @app.callback(
         Output("search-dropdown", "children"),
         Output("search-dropdown", "style"),
         Input("property-search", "value"),
     )
     def update_search_dropdown(search_value):
-
         if not search_value or len(search_value) < 2:
             return [], {"display": "none"}
 
-        search_value = search_value.lower()
-
-        matches = POSTCODES_DF[
-            POSTCODES_DF["label"].str.lower().str.contains(search_value)
-        ].head(8)
-
-        options = [
-            html.Div(
-                row["label"],
-                className="search-option",
-                id={"type": "search-option", "index": i},
-                **{
-                    "data-lat": row["latitude"],
-                    "data-lon": row["longitude"],
-                }
-            )
-            for i, row in matches.iterrows()
-        ]
+        matches = search_postcodes(search_value, limit=8)
+        options = build_option_divs(matches, option_type="search-option")
 
         return options, {"display": "block"}
+
+    @app.callback(
+        Output("property-search-clear", "style"),
+        Input("property-search", "value"),
+    )
+    def toggle_nav_clear_button(value):
+        if value:
+            return {"display": "flex"}
+        return {"display": "none"}
+
+    @app.callback(
+        Output("property-search", "value", allow_duplicate=True),
+        Output("search-dropdown", "style", allow_duplicate=True),
+        Input("property-search-clear", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def clear_nav_search(n_clicks):
+        if not n_clicks:
+            raise PreventUpdate
+        return "", {"display": "none"}
 
     @app.callback(
         Output("property-search", "value"),
@@ -113,12 +112,10 @@ def register_search_callbacks(app):
         prevent_initial_call=True,
     )
     def select_location(n_clicks, labels, lats, lons):
-
         if not n_clicks:
             raise PreventUpdate
 
         safe_clicks = [c or 0 for c in n_clicks]
-
         if max(safe_clicks) == 0:
             raise PreventUpdate
 
@@ -131,5 +128,5 @@ def register_search_callbacks(app):
                 "label": labels[idx],
                 "lat": float(lats[idx]),
                 "lon": float(lons[idx]),
-            }
+            },
         )

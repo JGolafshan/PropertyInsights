@@ -10,7 +10,7 @@ from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime, timezone
 from src.backend.property_pydantic_model import Property
-from beanie import (Document, Insert, Replace, SaveChanges, Update, before_event)
+from beanie import Document, Insert, Replace, SaveChanges, Update, before_event, Indexed
 
 
 class AuditBase(BaseModel):
@@ -42,10 +42,16 @@ class AuditBase(BaseModel):
         self.updated_by = updated_by
         await self.save()
 
-
-
 class PropertyDocument(Property, AuditBase, Document):
+    property_type: Indexed(str)  # type: ignore
 
     class Settings:
         name = "property"
+        indexes = [
+            "address.latitude",
+            "address.longitude",
+            "price.actual_price",
+            "property_type",
+            [("address.latitude", 1), ("address.longitude", 1)],  # Compound index for geo queries
+        ]
 

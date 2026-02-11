@@ -6,33 +6,18 @@ Date: 04/02/2025
 Author: Joshua David Golafshan
 """
 
-import dash_bootstrap_components as dbc
-from dash import Output, Input, State
-
-
 from dash import html
+from dash import Output, Input, State
 import dash_bootstrap_components as dbc
+from dash.exceptions import PreventUpdate
+from src.backend.point_of_intrest_data import POI_CATEGORIES
 
-def PointOfInterestModal(poi_list=None):
-    if poi_list is None:
-        poi_list = [
-            "Schools", "Hospitals", "Parks", "Shopping Centers",
-            "Transport", "Restaurants", "Gyms", "Cinemas"
-        ]
 
-    # Build 2-column rows of POIs
-    rows = []
-    for i in range(0, len(poi_list), 2):
-        col1 = dbc.Col(
-            dbc.Checkbox(id=f"poi-{i}", label=poi_list[i], className="poi-checkbox mb-2"),
-            width=6
-        )
-        col2 = dbc.Col(
-            dbc.Checkbox(id=f"poi-{i+1}", label=poi_list[i+1], className="poi-checkbox mb-2")
-            if i + 1 < len(poi_list) else dbc.Col(width=6),
-            width=6
-        )
-        rows.append(dbc.Row([col1, col2], className="poi-row mb-2 g-3"))
+def PointOfInterestModal():
+    options = [
+        {"label": key.replace("_", " ").title(), "value": key}
+        for key in POI_CATEGORIES.keys()
+    ]
 
     return dbc.Modal(
         [
@@ -40,12 +25,23 @@ def PointOfInterestModal(poi_list=None):
                 dbc.ModalTitle("Points of Interest", className="poi-modal-title"),
             ),
             dbc.ModalBody(
-                html.Div(rows, className="poi-modal-body")
+                html.Div(
+                    [
+                        dbc.Checklist(
+                            id="poi-selected",
+                            options=options,
+                            value=[],
+                            inline=False,
+                            className="poi-modal-body",
+                        )
+                    ]
+                )
             ),
             dbc.ModalFooter(
                 children=[
-                    dbc.Button("Reset", id="poi-modal-close", className="ms-auto poi-close-btn"),
-                    dbc.Button("Close", id="poi-modal-close", className="ms-auto poi-close-btn"),
+                    dbc.Button("Reset", id="poi-reset", className="me-auto poi-close-btn", color="secondary"),
+                    dbc.Button("Apply", id="poi-apply", className="poi-close-btn", color="primary"),
+                    dbc.Button("Close", id="poi-modal-close", className="poi-close-btn", color="secondary"),
                 ]
             ),
         ],
@@ -53,17 +49,43 @@ def PointOfInterestModal(poi_list=None):
         is_open=False,
         centered=True,
         size="lg",
-        className="poi-modal"
+        className="poi-modal",
     )
+
 
 def register_poi_modal(app):
     @app.callback(
         Output("poi-modal", "is_open"),
-        Input("poi-modal-open", "n_clicks"),
+        Input("poi-modal-open-desktop", "n_clicks"),
+        Input("poi-modal-open-mobile", "n_clicks"),
         Input("poi-modal-close", "n_clicks"),
         State("poi-modal", "is_open"),
     )
-    def toggle_filter_modal(open, close, is_open):
-        if open or close:
+    def toggle_poi_modal(_open_desktop, _open_mobile, close_clicks, is_open):
+        if _open_desktop or _open_mobile or close_clicks:
             return not is_open
         return is_open
+
+    @app.callback(
+        Output("poi-selected", "value"),
+        Output("selected-pois", "data"),
+        Input("poi-selected", "value"),
+        Input("poi-reset", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def sync_selected_pois(selected, reset_clicks):
+        if reset_clicks:
+            return [], []
+
+        if selected is None:
+            raise PreventUpdate
+
+        return selected, selected
+
+    @app.callback(
+        Output("poi-apply", "children"),
+        Input("poi-apply", "n_clicks"),
+        prevent_initial_call=True,
+    )
+    def _probe_apply_click(n):
+        return f"Apply ({n})"
