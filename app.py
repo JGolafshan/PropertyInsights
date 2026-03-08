@@ -5,19 +5,19 @@
 Date: 04/02/2025
 Author: Joshua David Golafshan
 """
-import logging
 
+import logging
 from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
 from src.backend.database import get_all_properties, init_db, get_total_property_count
 from src.backend.utils import run_async, has_valid_geo
-from src.frontend.compoments.navbar import Navbar, register_search_callbacks
-from src.frontend.compoments.map_view import MapView, register_map_callbacks
-from src.frontend.compoments.side_menu import PropertyMenu, PropertyCards, register_property_card_callbacks
-from src.frontend.modals.filter_modal import register_filter_modal, FilterModal
-from src.frontend.modals.poi_modal import register_poi_modal, PointOfInterestModal
-from src.frontend.modals.external_data_modal import register_ed_modal, ExternalDataModal
-from src.frontend.modals.search_modal import SearchModal, register_search_modal_callbacks, register_search_modal_toggle
+from src.frontend.compoments.navbar import navbar, register_search_callbacks
+from src.frontend.compoments.map_view import map_view, register_map_callbacks
+from src.frontend.compoments.side_menu import property_menu, property_cards, register_property_card_callbacks
+from src.frontend.modals.filter_modal import register_filter_modal, filter_modal
+from src.frontend.modals.poi_modal import register_poi_modal, point_of_interest_modal
+from src.frontend.modals.external_data_modal import register_ed_modal, external_data_modal
+from src.frontend.modals.search_modal import search_modal, register_search_modal_callbacks, register_search_modal_toggle
 
 
 logging.basicConfig(
@@ -53,14 +53,14 @@ app.layout = html.Div(
         dcc.Store(id="poi-data", data=[]),
         dcc.Store(id="selected-dimension-points", data=[]),
 
-        FilterModal(),
-        PointOfInterestModal(),
-        SearchModal(),
-        ExternalDataModal(),
+        filter_modal(),
+        point_of_interest_modal(),
+        search_modal(),
+        external_data_modal(),
 
         # Mobile Navbar (shown < lg)
         html.Div(
-            Navbar(),
+            navbar(),
             className="d-block d-xl-none"
         ),
 
@@ -73,13 +73,13 @@ app.layout = html.Div(
                 html.Div(
                     className="sidebar col-12 col-xl-3 d-none d-xl-flex flex-column",
                     children=[
-                        PropertyMenu(total_count=db_total_count, shown_count=shown_count),
-                        PropertyCards(properties=data),
+                        property_menu(total_count=db_total_count, shown_count=shown_count),
+                        property_cards(properties=data),
                     ],
                 ),
                 # Map (full width on mobile, reduced on desktop)
                 html.Div(
-                    MapView(properties=data),
+                    map_view(properties=data),
                     id="property-map",
                     className="col-12 col-xl-9",
                 ),

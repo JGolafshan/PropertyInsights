@@ -6,16 +6,17 @@ from typing import Iterable
 import pandas as pd
 from dash import html
 
-from src.backend.application_constants import SAVE_LOCATION
+from src.backend.application_constants import PROJECT_ROOT
 
 
-POSTCODES_DF = pd.read_csv(SAVE_LOCATION / "au_postcodes.csv", dtype={"postcode": str})
+
+POSTCODES_DF = pd.read_csv(PROJECT_ROOT / "assets" / "au_postcodes.csv", dtype={"postcode": str})
 POSTCODES_DF["label"] = (
     POSTCODES_DF["place_name"] + ", " + POSTCODES_DF["state_code"] + " " + POSTCODES_DF["postcode"]
 )
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Match:
     label: str
     lat: float

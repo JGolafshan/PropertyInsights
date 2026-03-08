@@ -8,23 +8,9 @@ Author: Joshua David Golafshan
 
 from dash import html
 from src.backend.application_constants import PROJECT_ROOT
-from src.backend.utils import format_price, has_valid_geo
-from dash import Input, Output, State, ALL, ctx
+from src.backend.utils import format_price, has_valid_geo, attr_map
+from dash import Input, Output, ALL, ctx
 from dash.exceptions import PreventUpdate
-
-# --- new helpers (kept local so sidebar cards can reuse them) ---
-def _attr_map(p) -> dict[str, int]:
-    out: dict[str, int] = {}
-    for a in (getattr(p, "attributes", None) or []):
-        name = getattr(a, "attribute_name", None)
-        count = getattr(a, "attribute_count", None)
-        if not name:
-            continue
-        try:
-            out[str(name).strip().lower()] = int(count)
-        except (TypeError, ValueError):
-            continue
-    return out
 
 
 def _get_land_size_display(p) -> str | None:
@@ -48,7 +34,7 @@ def _feature_chip(icon_class: str, text: str):
     )
 
 
-def PropertyCard(
+def property_card(
     address,
     price,
     status,
@@ -76,7 +62,7 @@ def PropertyCard(
         children=[
             # Image on the left
             html.Img(
-                src=img_url or PROJECT_ROOT + "/assets/placeholder.jpg",
+                src=img_url or PROJECT_ROOT + "/assets/placeholder.webp",
                 className="property-thumbnail",
             ),
             # Text content on the right
@@ -112,7 +98,7 @@ def _count_label_text(shown_count: int, total_count: int) -> str:
     return f"Showing {shown:,} of {total:,}"
 
 
-def PropertyMenu(*, total_count: int = 0, shown_count: int = 0):
+def property_menu(*, total_count: int = 0, shown_count: int = 0):
     return html.Div(
         id="property-selector",
         children=[
@@ -146,23 +132,23 @@ def PropertyMenu(*, total_count: int = 0, shown_count: int = 0):
     )
 
 
-def PropertyCards(properties):
+def property_cards(properties):
     # Optimization: properties are already filtered for geo at DB level
     # No need to re-filter with has_valid_geo
     return html.Div(
         id="property-list",
         children=[
-            PropertyCard(
+            property_card(
                 address=listing.address.address_raw,
                 price=format_price(listing.price),
                 status=listing.sale_type,
                 img_url=listing.images[0].image_path if listing.images else None,
                 property_id=str(listing.id),
-                beds=_attr_map(listing).get("bedrooms"),
-                baths=_attr_map(listing).get("bathrooms"),
-                cars=_attr_map(listing).get("car_spaces")
-                     or _attr_map(listing).get("carspaces")
-                     or _attr_map(listing).get("car space"),
+                beds=attr_map(listing).get("bedrooms"),
+                baths=attr_map(listing).get("bathrooms"),
+                cars=attr_map(listing).get("car_spaces")
+                     or attr_map(listing).get("carspaces")
+                     or attr_map(listing).get("car space"),
                 land=_get_land_size_display(listing),
             )
             for listing in (properties or [])

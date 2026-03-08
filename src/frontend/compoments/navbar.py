@@ -16,7 +16,7 @@ from src.frontend.compoments.location_search import (
 )
 
 
-def Navbar():
+def navbar():
     return html.Nav(
         className="navbar",
         children=[

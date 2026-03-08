@@ -7,13 +7,14 @@ Author: Joshua David Golafshan
 """
 
 import dash_leaflet as dl
-from dash import Input, Output, State, ctx, html, dcc  # <-- add dcc
+from dash import Input, Output, State, ctx, html, dcc
 from dash.exceptions import PreventUpdate
 from src.backend.property_db_model import PropertyDocument
 from src.backend.utils import run_async
-from src.frontend.compoments.property_hover_card import PropertyHoverCard
+from src.frontend.compoments.property_hover_card import property_hover_card
 from src.backend.point_of_intrest_data import get_pois_in_bbox_async
 
+# (Color, Name, Icon)
 POI_STYLE = {
     "school": ("#2563eb", "School", "fa-solid fa-graduation-cap"),
     "hospital": ("#dc2626", "Hospital", "fa-solid fa-hospital"),
@@ -40,8 +41,8 @@ PROPERTY_STYLE = {
 }
 
 
-def PropertyMarker(p: PropertyDocument):
-    prop_type = (p.property_type).lower()
+def property_marker(p: PropertyDocument):
+    prop_type = p.property_type.lower()
     default_set = PROPERTY_STYLE.get("other")
     color, icon_cls = PROPERTY_STYLE.get(prop_type, default_set)
 
@@ -63,7 +64,7 @@ def PropertyMarker(p: PropertyDocument):
         iconOptions=icon,
         children=[
             dl.Popup(
-                PropertyHoverCard(p),
+                property_hover_card(p),
                 autoClose=True,
                 closeOnEscapeKey=True,
                 closeButton=False,
@@ -73,7 +74,7 @@ def PropertyMarker(p: PropertyDocument):
         ],
     )
 
-def PoiMarker(poi: dict):
+def poi_marker(poi: dict):
     poi_type = poi.get("category")
     color, label, icon_cls = POI_STYLE.get(
         poi_type, ("#111827", "POI", "fa-solid fa-location-dot")
@@ -98,16 +99,27 @@ def PoiMarker(poi: dict):
     )
 
 
-def MapView(properties):
+def map_view(properties):
     return html.Div(
         style={"width": "100%", "height": "100%"},
         children=[
             dcc.Store(id="map-resize-done"),
+
             dcc.Interval(id="map-resize-kick", interval=300, n_intervals=0, max_intervals=1),
             dl.Map(
                 children=[
                     dl.TileLayer(url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"),
-                    dl.LayerGroup(id="property-markers", children=[PropertyMarker(p) for p in properties]),
+
+                    dl.MeasureControl(
+                        position="topleft",
+                        primaryLengthUnit="kilometers",
+                        secondaryLengthUnit="meters",
+                        primaryAreaUnit="hectares",
+                        activeColor="#2563eb",
+                        completedColor="#16a34a",
+                    ),
+
+                    dl.LayerGroup(id="property-markers", children=[property_marker(p) for p in properties]),
                     dl.LayerGroup(id="poi-markers", children=[]),
                 ],
                 center=[-33.8688, 151.2093],
@@ -163,7 +175,7 @@ def register_map_callbacks(app):
     def render_pois(poi_data):
         if not poi_data:
             return []
-        return [PoiMarker(p) for p in poi_data]
+        return [poi_marker(p) for p in poi_data]
 
     @app.callback(
         Output("poi-data", "data"),

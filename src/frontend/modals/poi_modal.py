@@ -13,7 +13,7 @@ from dash.exceptions import PreventUpdate
 from src.backend.point_of_intrest_data import POI_CATEGORIES
 
 
-def PointOfInterestModal():
+def point_of_interest_modal():
     options = [
         {"label": key.replace("_", " ").title(), "value": key}
         for key in POI_CATEGORIES.keys()

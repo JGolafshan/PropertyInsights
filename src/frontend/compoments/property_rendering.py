@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from src.backend.utils import format_price, has_valid_geo
-from src.frontend.compoments.side_menu import PropertyCard
-from src.frontend.compoments.map_view import PropertyMarker
+from src.frontend.compoments.side_menu import property_card
+from src.frontend.compoments.map_view import property_marker
 
 
 def split_total_and_geo(properties: list) -> tuple[int, list]:
@@ -19,7 +19,7 @@ def split_total_and_geo(properties: list) -> tuple[int, list]:
 def build_cards(properties: list) -> list:
     """Build property cards. Properties already filtered for valid geo at DB level."""
     return [
-        PropertyCard(
+        property_card(
             address=p.address.address_raw,
             price=format_price(p.price),
             status=p.sale_type,
@@ -32,4 +32,4 @@ def build_cards(properties: list) -> list:
 
 def build_markers(properties: list) -> list:
     """Build map markers. Properties already filtered for valid geo at DB level."""
-    return [PropertyMarker(p) for p in (properties or [])]
+    return [property_marker(p) for p in (properties or [])]

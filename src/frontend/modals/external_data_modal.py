@@ -10,7 +10,7 @@ Author: Joshua David Golafshan
 """
 
 
-def ExternalDataModal():
+def external_data_modal():
     return dbc.Modal(
         [
             dbc.ModalHeader(dbc.ModalTitle("External Data")),

@@ -13,10 +13,10 @@ from dash.exceptions import PreventUpdate
 
 from src.backend.database import get_filtered_properties, get_all_properties, get_total_property_count
 from src.backend.utils import run_async
-from src.frontend.compoments.property_hover_card import _attr_map
-from src.frontend.compoments.side_menu import PropertyCard, _get_land_size_display
+from src.frontend.compoments.property_hover_card import attr_map
+from src.frontend.compoments.side_menu import property_card, _get_land_size_display
 from src.backend.utils import format_price
-from src.frontend.compoments.map_view import PropertyMarker
+from src.frontend.compoments.map_view import property_marker
 
 
 DEFAULT_PRICE_RANGE = [200000, 1500000]
@@ -25,7 +25,7 @@ DEFAULT_MIN_BEDROOMS = None
 DEFAULT_MIN_BATHROOMS = None
 
 
-def FilterModal():
+def filter_modal():
     return dbc.Modal(
         [
             dbc.ModalHeader(dbc.ModalTitle("Filters")),
@@ -172,24 +172,24 @@ def register_filter_modal(app):
         )
 
         cards = [
-            PropertyCard(
+            property_card(
                 address=p.address.address_raw if p.address and p.address.address_raw else None,
                 price=format_price(p.price),
                 status=p.sale_type,
                 img_url=p.images[0].image_path if p.images else None,
                 property_id=str(p.id),
-                beds=_attr_map(p).get("bedrooms"),
-                baths=_attr_map(p).get("bathrooms"),
-                cars=_attr_map(p).get("car_spaces")
-                     or _attr_map(p).get("carspaces")
-                     or _attr_map(p).get("car space"),
+                beds=attr_map(p).get("bedrooms"),
+                baths=attr_map(p).get("bathrooms"),
+                cars=attr_map(p).get("car_spaces")
+                     or attr_map(p).get("carspaces")
+                     or attr_map(p).get("car space"),
                 land=_get_land_size_display(p),
             )
             for p in props
             if p and p.address
         ]
 
-        markers = [PropertyMarker(p) for p in props if p and p.address]
+        markers = [property_marker(p) for p in props if p and p.address]
 
         total_count = run_async(get_total_property_count())
         count_label = f"Showing {len(props or []):,} of {int(total_count or 0):,}"
@@ -214,24 +214,24 @@ def register_filter_modal(app):
         props = run_async(get_all_properties())
 
         cards = [
-            PropertyCard(
+            property_card(
                 address=p.address.address_raw if p.address and p.address.address_raw else None,
                 price=format_price(p.price),
                 status=p.sale_type,
                 img_url=p.images[0].image_path if p.images else None,
                 property_id=str(p.id),
-                beds=_attr_map(p).get("bedrooms"),
-                baths=_attr_map(p).get("bathrooms"),
-                cars=_attr_map(p).get("car_spaces")
-                     or _attr_map(p).get("carspaces")
-                     or _attr_map(p).get("car space"),
+                beds=attr_map(p).get("bedrooms"),
+                baths=attr_map(p).get("bathrooms"),
+                cars=attr_map(p).get("car_spaces")
+                     or attr_map(p).get("carspaces")
+                     or attr_map(p).get("car space"),
                 land=_get_land_size_display(p),
             )
             for p in props
             if p and p.address
         ]
 
-        markers = [PropertyMarker(p) for p in props if p and p.address]
+        markers = [property_marker(p) for p in props if p and p.address]
 
         total_count = run_async(get_total_property_count())
         count_label = f"Showing {len(props or []):,} of {int(total_count or 0):,}"

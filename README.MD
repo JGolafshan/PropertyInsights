@@ -1,6 +1,3 @@
-# TODO
-* optimize code for more property loading with less time
-
 # Property Insights
 Property Insights is a Python-based data analytics project designed to support data-driven property investment decisions at the suburb level. The project integrates property market data with external datasets—such as points of interest (POI) and socio-economic indicators—to help investors evaluate, compare, and shortlist suburbs.
 
@@ -12,20 +9,10 @@ Choosing the right suburb is one of the most critical steps in property investin
 * Integration of external datasets, including:
   * Points of Interest (POI) (e.g. schools, transport, amenities)
 
-## Setup
-
-## How to add custom data
-
-### Property Data
-
-
-### External Data
-
 ## Data Sources
 * Property market data (prices, rents, yields, sales activity)
 * Points of Interest (POI) data
 * Socio-economic and demographic data
-
 *(Exact sources may vary depending on data availability and updates.)*
 
 
@@ -37,7 +24,7 @@ Property Insights is intended for:
 * Portfolio projects demonstrating applied data analytics in a real-world context
 
 ## Project Status
-This project is under active development. Future enhancements may include additional datasets, scoring models, and visual dashboards.
+This project is considered complete, however i am open to feature requests and contributions.
 
 ## Disclaimer
 This project is for educational and analytical purposes only and does not constitute financial advice.

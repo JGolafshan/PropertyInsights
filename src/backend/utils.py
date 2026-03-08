@@ -6,10 +6,29 @@ Date: 04/02/2025
 Author: Joshua David Golafshan
 """
 
+import math
 import asyncio
 import threading
 from concurrent.futures import Future
-import math
+from src.backend.property_db_model import PropertyDocument
+
+
+def attr_map(p: PropertyDocument) -> dict[str, int]:
+    """
+    Convert p.attributes -> {name: count}
+    Handles missing/None attributes safely.
+    """
+    out: dict[str, int] = {}
+    for a in (getattr(p, "attributes", None) or []):
+        name = getattr(a, "attribute_name", None)
+        count = getattr(a, "attribute_count", None)
+        if not name:
+            continue
+        try:
+            out[str(name).strip().lower()] = int(count)
+        except (TypeError, ValueError):
+            continue
+    return out
 
 
 def calculate_distance(lat1, lon1, lat2, lon2):

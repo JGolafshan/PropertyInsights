@@ -17,7 +17,7 @@ from src.frontend.compoments.location_search import (
 )
 
 
-def SearchModal():
+def search_modal():
     return dbc.Modal(
         [
             dbc.ModalBody(

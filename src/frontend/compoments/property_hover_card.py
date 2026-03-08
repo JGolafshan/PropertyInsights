@@ -6,30 +6,11 @@ Date: 04/02/2025
 Author: Joshua David Golafshan
 """
 
-from __future__ import annotations
 
 from dash import html
 from src.backend.property_db_model import PropertyDocument
-from src.backend.utils import format_price
+from src.backend.utils import format_price, attr_map
 from src.backend.application_constants import PROJECT_ROOT
-
-
-def _attr_map(p: PropertyDocument) -> dict[str, int]:
-    """
-    Convert p.attributes -> {name: count}
-    Handles missing/None attributes safely.
-    """
-    out: dict[str, int] = {}
-    for a in (getattr(p, "attributes", None) or []):
-        name = getattr(a, "attribute_name", None)
-        count = getattr(a, "attribute_count", None)
-        if not name:
-            continue
-        try:
-            out[str(name).strip().lower()] = int(count)
-        except (TypeError, ValueError):
-            continue
-    return out
 
 
 def _get_land_size_display(p: PropertyDocument) -> str | None:
@@ -57,11 +38,11 @@ def _feature_item(icon_class: str, text: str):
     )
 
 
-def PropertyHoverCard(p: PropertyDocument):
+def property_hover_card(p: PropertyDocument):
     img_src = (
         p.images[0].image_path
         if getattr(p, "images", None) and len(p.images) > 0 and getattr(p.images[0], "image_path", None)
-        else PROJECT_ROOT + "/assets/placeholder.jpg"
+        else PROJECT_ROOT + "/assets/placeholder.webp"
     )
 
     address = (
@@ -72,7 +53,7 @@ def PropertyHoverCard(p: PropertyDocument):
 
     price_txt = format_price(getattr(p, "price", None))
 
-    attrs = _attr_map(p)
+    attrs = attr_map(p)
     beds = attrs.get("bedrooms")
     baths = attrs.get("bathrooms")
     cars = attrs.get("car_spaces") or attrs.get("carspaces") or attrs.get("car space")
