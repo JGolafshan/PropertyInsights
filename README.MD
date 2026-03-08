@@ -10,10 +10,8 @@ Choosing the right suburb is one of the most critical steps in property investin
   * Points of Interest (POI) (e.g. schools, transport, amenities)
 
 ## Data Sources
-* Property market data (prices, rents, yields, sales activity)
+* Property market data 
 * Points of Interest (POI) data
-* Socio-economic and demographic data
-*(Exact sources may vary depending on data availability and updates.)*
 
 
 ## Use Case
@@ -24,7 +22,7 @@ Property Insights is intended for:
 * Portfolio projects demonstrating applied data analytics in a real-world context
 
 ## Project Status
-This project is considered complete, however i am open to feature requests and contributions.
+This project is considered complete; however, I am open to feature requests and contributions.
 
 ## Disclaimer
 This project is for educational and analytical purposes only and does not constitute financial advice.
